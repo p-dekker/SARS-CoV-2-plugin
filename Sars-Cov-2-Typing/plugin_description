@@ -1,0 +1,6 @@
+genomics
+io.github.pdekker.viraltyping.action.actiongroup.ViralTypingActionGroup
+io.github.pdekker.viraltyping.action.consensus.ExtractConsensusAction
+io.github.pdekker.viraltyping.action.transferannot.TransferAnnotationsAction
+io.github.pdekker.viraltyping.action.alignment.AlignmentReportAction
+io.github.pdekker.viraltyping.action.reportmerger.ReportMergerAction
