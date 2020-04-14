@@ -58,7 +58,6 @@ public class ConsensusBuilder implements Cleanupable {
 	private final boolean addConflicts;
 	private final double minFrequency;
 	private CoverageInformation coverageInformation;
-//	private final double minProblematicVariantFreq;
 
 	private final int IGNORE_FAILURES_CLOSE_TO_END = 25;
 

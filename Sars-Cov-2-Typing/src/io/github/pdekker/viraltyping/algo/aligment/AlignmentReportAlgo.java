@@ -13,6 +13,7 @@ import com.clcbio.api.base.algo.alignment.AlignmentParameters.EndGapCost;
 import com.clcbio.api.base.algorithm.Algo;
 import com.clcbio.api.base.algorithm.AlgoException;
 import com.clcbio.api.base.algorithm.AlgoHistoryTools;
+import com.clcbio.api.base.algorithm.AlgoOutputNamingTools;
 import com.clcbio.api.base.algorithm.CallableExecutor;
 import com.clcbio.api.base.algorithm.ChannelDescription;
 import com.clcbio.api.base.algorithm.Multiplicity;
@@ -133,7 +134,7 @@ public class AlignmentReportAlgo extends Algo {
 			tom.registerClcObject(cdsSeq);
 			final Sequence translated = DNA_TRANSLATOR.translate(cdsSeq);
 			translated.startNoUndoBlock();
-			translated.setName("Translation of " + cds.getName() );
+			translated.setName(aln.getSequence(i).getName());
 			translated.endNoUndoBlock();
 			tom.disposeClcObject(cdsSeq);
 			tom.registerClcObject(translated);
@@ -151,6 +152,7 @@ public class AlignmentReportAlgo extends Algo {
 
 		final Alignment protAln = AlignmentAlgoFacade.getInstance()
 				.align(Collections.<SequenceSource>singletonList(input), p, child);
+		protAln.setName("Translation of " + cds.getName());
 		tom.disposeClcObject(input);
 		tom.registerClcObject(protAln);
 		tom.disposeClcObjects(list);
@@ -179,7 +181,7 @@ public class AlignmentReportAlgo extends Algo {
 		reportBuilder.startAlignment(aln, referenceIndex);
 		for (int i = refStart; i < refEnd; i++) {
 			final char[] symbols = getSequenceSymbols(aln, ignoreGapAtEnd, i, alphabet);
-			if (!sameSymbols(symbols, referenceIndex)) {
+			if (!sameSymbols(symbols, referenceIndex, alphabet)) {
 				final String pos = postionToString(humanReadablePostion, humanReadableInsertionPosition);
 				reportBuilder.addMutationData(pos, symbols, referenceIndex);
 			}
@@ -219,13 +221,16 @@ public class AlignmentReportAlgo extends Algo {
 		return symbols;
 	}
 
-	private static boolean sameSymbols(char[] symbols, int referenceIndex) {
+	private static boolean sameSymbols(char[] symbols, int referenceIndex, Alphabet alphabet) {
 		if (symbols.length < 2) {
 			return true;
 		}
 		final char ref = symbols[referenceIndex];
-		for (int i = 1; i < symbols.length; i++) {
-			if (ref != symbols[i] && symbols[i] != ' ') {
+		for (int i = 0; i < symbols.length; i++) {
+			if (i == referenceIndex || symbols[i] == ' ') {
+				continue;
+			}
+			if (!AlphabetTools.couldBeIdentical("" + ref, "" + symbols[i], alphabet)) {
 				return false;
 			}
 		}

@@ -320,8 +320,6 @@ class ConsensusIterator extends AbstractMatchListIterator {
 					final int readPos = info.getReadPosition();
 					final int unalignedLength = readPos - info.getSegmentStart();
 					if (unalignedLength > MAX_UNALIGNED_END && position - unalignedLength > MAX_UNALIGNED_END) {
-//						byte[] seq = ArrayTools.getSubArray(info.getReadSymbols(), info.getSegmentStart(), readPos);
-//						leftBreakPoint.add(seq);
 						leftBreakPoint++;
 					}
 				}

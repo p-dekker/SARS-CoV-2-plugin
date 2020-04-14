@@ -75,7 +75,7 @@ import io.github.pdekker.viraltyping.algo.consensus.ConsensusInterpreter.PrimerM
 public class ConsensusAlgo extends Algo {
 
 	public static final String ID = "sars_cov2_consensus_creator";
-	private static final double VERSION = 1.5;
+	private static final double VERSION = 1.6;
 	public static final String NAME = "Extract Consensus";
 	public static long algoVersionUID = 2202964220434324834L;
 	private static byte N = AlphabetTools.getDnaAlphabet().getMostAmbiguousSymbolIndex();
@@ -244,7 +244,6 @@ public class ConsensusAlgo extends Algo {
 				final String msg = problematicSegments.stream()
 						.collect(Collectors.joining(", ", "Following segments have N in sequence: ", "."));
 				handler.postMessage(msg, this);
-				;
 			}
 
 			handler.postOutputObjects(output, this);

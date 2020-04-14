@@ -73,14 +73,11 @@ import io.github.pdekker.viraltyping.algo.consensus.ConsensusBuilder;
 public class TransferAnnotationsAlgo extends Algo {
 
 	public static final String ID = "transfer_annotations";
-	private static final double VERSION = 2.2;
+	private static final double VERSION = 2.3;
 	public static final String NAME = "Transfer Annotations";
 
 	private final NumberFormat percFormatter = getFormatter();
 	
-	public final static String matpept = "Mature peptide";
-	public final static String gene = FeatureTypes.GENE;
-
 	public static final ChannelDescription<NucleotideSequence> INPUT_CHANNEL = new ChannelDescription<NucleotideSequence>(
 			"Sequence", "Sequence", NucleotideSequence.class, "Sequence");
 	public static final ChannelDescription<NucleotideSequence> NUCL_OUTPUT = ChannelDescription
@@ -175,7 +172,7 @@ public class TransferAnnotationsAlgo extends Algo {
 				annotatedOutput.setName(AlgoOutputNamingTools.createRetaggedName(inputSeq.getName(), "annot"));
 				annotatedOutput.endNoUndoBlock();
 				output.add(annotatedOutput);
-				postToChannel(NUCL_OUTPUT, inputSeq);
+				postToChannel(NUCL_OUTPUT, (NucleotideSequence) annotatedOutput);
 			}
 			endActivity(child);
 
@@ -208,7 +205,7 @@ public class TransferAnnotationsAlgo extends Algo {
 				output.add(failureTrack);
 			}
 
-			final FeatureTrack geneTrack = asFeatureTrack(annotatedOutput, genome, gene);
+			final FeatureTrack geneTrack = asFeatureTrack(annotatedOutput, genome, FeatureTypes.GENE);
 			if (geneTrack != null) {
 				postToChannel(GENE_TRACK_OUTPUT, geneTrack);
 				output.add(geneTrack);
@@ -274,7 +271,7 @@ public class TransferAnnotationsAlgo extends Algo {
 			if (validLength && protString.startsWith("M") && protString.indexOf('*') == protString.length() - 1) {
 				// everything looks goods, we are ready with this cds...
 				f.addAnnotation("translation", protString);
-				final double perc = protString.length() * 1.0 / expectedLen;
+				final double perc = 100.0;
 				percentageOrf = percFormatter.format(perc);
 				msg.add("Ok");
 				warning = false;
@@ -371,7 +368,9 @@ public class TransferAnnotationsAlgo extends Algo {
 		private int getExpectedProtLength(Feature f) {
 			final Object[] annot = f.getAnnotation("translation");
 			if (annot != null && annot.length > 0) {
-				return annot[0].toString().length();
+				String prot = annot[0].toString();
+				int len = prot.length();
+				return prot.endsWith("*") ? len : len + 1;
 			}
 			return f.getRegion().getSize() / 3;
 		}
